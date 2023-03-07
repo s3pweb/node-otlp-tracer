@@ -1,4 +1,4 @@
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { Resource } from '@opentelemetry/resources';
@@ -19,7 +19,7 @@ export class HttpTracer {
       url: url,
     });
 
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+    provider.addSpanProcessor(new BatchSpanProcessor(exporter));
     provider.register();
 
     this.tracer = opentelemetry.trace.getTracer(tracerName);
