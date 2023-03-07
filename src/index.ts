@@ -1,3 +1,7 @@
+import { GrpcTracer } from './grpc-tracer';
 import { HttpTracer } from './http-tracer';
 
-export { HttpTracer };
+export {
+  GrpcTracer,
+  HttpTracer,
+};
