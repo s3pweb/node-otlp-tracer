@@ -1,56 +1,13 @@
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { Resource } from '@opentelemetry/resources';
-import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
-import opentelemetry, { Context, Span, Tracer } from '@opentelemetry/api';
+import { S3pTracer } from './s3p-tracer';
 
-export class HttpTracer {
-  private tracer: Tracer;
-
+export class HttpTracer extends S3pTracer {
   constructor(url: string, serviceName: string, tracerName: string) {
-    const provider = new NodeTracerProvider({
-      resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-      }),
-    });
-
+    // Create exporter
     const exporter = new OTLPTraceExporter({
       url: url,
     });
-
-    provider.addSpanProcessor(new BatchSpanProcessor(exporter));
-    provider.register();
-
-    this.tracer = opentelemetry.trace.getTracer(tracerName);
-  }
-
-  /**
-   * Get a remote context from the given parent Span.
-   */
-  getContext(parentSpan: Span): Context {
-    return opentelemetry.trace.setSpanContext(opentelemetry.context.active(), parentSpan.spanContext());
-  }
-
-  /**
-   * Get a remote context from the given traceId and spanId.
-   */
-  getRemoteContext(traceId: string, spanId: string, isRemote = true): Context {
-    return opentelemetry.trace.setSpanContext(
-      opentelemetry.context.active(),
-      {
-        traceId: traceId,
-        spanId: spanId,
-        traceFlags: 1,
-        isRemote: isRemote,
-      },
-    );
-  }
-
-  /**
-   * Start a new Span with an optional context. This Span MUST be closed with `span.end()`.
-   */
-  createSpan(name: string, context?: Context): Span {
-    return this.tracer.startSpan(name, {}, context);
+    // Create base class
+    super(exporter, serviceName, tracerName);
   }
 }
