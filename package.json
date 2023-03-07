@@ -1,6 +1,6 @@
 {
   "name": "@s3pweb/node-otlp-tracer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A open telemetry tracer for node JS",
   "keywords": [
     "otlp",
